@@ -18,6 +18,6 @@ setup(
     url='https://github.com/MovementControl/mj_envs.git',
     author='Movement Control Lab, UW',
     install_requires=[
-        'click', 'gym==0.9.3', 'mujoco_py==1.50.1.35', 'termcolor',
+        'click', 'gym==0.9.3', 'mujoco-py<1.50.2,>=1.50.1', 'termcolor',
     ],
 )
