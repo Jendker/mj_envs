@@ -10,13 +10,13 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.S_grasp_sid = 0
         self.obj_bid = 0
         curr_dir = os.path.dirname(os.path.abspath(__file__))
-        mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_relocateSR.xml', 5)
+        mujoco_env.MujocoEnv.__init__(self, curr_dir+'/../../../resources/ShadowRobot/DAPG_relocateSR.xml', 5)
         
         # change actuator sensitivity
-        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('A_WRJ1'):self.sim.model.actuator_name2id('A_WRJ0')+1,:] = np.array([10, 0, 0])
-        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('A_FFJ3'):self.sim.model.actuator_name2id('A_THJ0')+1,:] = np.array([1, 0, 0])
-        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('A_WRJ1'):self.sim.model.actuator_name2id('A_WRJ0')+1,:] = np.array([0, -10, 0])
-        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('A_FFJ3'):self.sim.model.actuator_name2id('A_THJ0')+1,:] = np.array([0, -1, 0])
+        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([10, 0, 0])
+        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([1, 0, 0])
+        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([0, -10, 0])
+        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([0, -1, 0])
 
         self.target_obj_sid = self.sim.model.site_name2id("target")
         self.S_grasp_sid = self.sim.model.site_name2id('S_grasp')
