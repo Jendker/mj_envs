@@ -9,17 +9,19 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.target_obj_sid = 0
         self.S_grasp_sid = 0
         self.obj_bid = 0
+        self.index_tip = 0
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/../../../resources/ShadowRobot/DAPG_relocateSR.xml', 5)
         
         # change actuator sensitivity
-        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([10, 0, 0])
-        self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([1, 0, 0])
-        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([0, -10, 0])
-        self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([0, -1, 0])
+        # self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([10, 0, 0])
+        # self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([1, 0, 0])
+        # self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([0, -10, 0])
+        # self.sim.model.actuator_biasprm[self.sim.model.actuator_name2id('rh_FFJ4'):self.sim.model.actuator_name2id('rh_THJ1')+1,:] = np.array([0, -1, 0])
 
         self.target_obj_sid = self.sim.model.site_name2id("target")
         self.S_grasp_sid = self.sim.model.site_name2id('S_grasp')
+        self.index_tip = self.sim.model.body_name2id('rh_fftip')
         self.obj_bid = self.sim.model.body_name2id('Object')
         utils.EzPickle.__init__(self)
         self.act_mid = np.mean(self.model.actuator_ctrlrange, axis=1)
@@ -54,8 +56,11 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         # xpos for obj
         # xpos for target
         qp = self.data.qpos.ravel()
-        obj_pos  = self.data.body_xpos[self.obj_bid].ravel()
+        obj_pos = self.data.body_xpos[self.obj_bid].ravel()
         palm_pos = self.data.site_xpos[self.S_grasp_sid].ravel()
+        # index_tip_pos = self.data.body_xpos[self.index_tip].ravel()
+        # jacobian = self.data.get_body_jacp('rh_palm')
+        # print(jacobian)
         target_pos = self.data.site_xpos[self.target_obj_sid].ravel()
         return np.concatenate([qp[:-6], palm_pos-obj_pos, palm_pos-target_pos, obj_pos-target_pos])
        
