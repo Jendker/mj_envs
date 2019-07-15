@@ -31,7 +31,7 @@ class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         a = np.clip(a, -1.0, 1.0)
         try:
             a = self.act_mid + a*self.act_rng # mean center and scale
-        except:
+        except AttributeError:
             a = a                             # only for the initialization phase
         self.do_simulation(a, self.frame_skip)
         ob = self.get_obs()
