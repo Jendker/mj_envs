@@ -28,11 +28,11 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.act_rng = 0.5*(self.model.actuator_ctrlrange[:,1]-self.model.actuator_ctrlrange[:,0])
 
     def _step(self, a):
-        a = np.clip(a, -1.0, 1.0)
-        try:
-            a = self.act_mid + a*self.act_rng # mean center and scale
-        except AttributeError:
-            a = a                             # only for the initialization phase
+        # a = np.clip(a, -1.0, 1.0)
+        # try:
+        #     a = self.act_mid + a*self.act_rng # mean center and scale
+        # except AttributeError:
+        #     a = a                             # only for the initialization phase
         self.do_simulation(a, self.frame_skip)
         ob = self._get_obs()
         obj_pos  = self.data.body_xpos[self.obj_bid].ravel()
