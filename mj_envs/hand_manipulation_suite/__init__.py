@@ -37,6 +37,6 @@ from mj_envs.hand_manipulation_suite.relocate_v0 import RelocateEnvV0
 register(
     id='relocateSR-v0',
     entry_point='mj_envs.hand_manipulation_suite:RelocateEnvSRV0',
-    max_episode_steps=10000,
+    max_episode_steps=200,
 )
 from mj_envs.hand_manipulation_suite.relocateSR_v0 import RelocateEnvSRV0
