@@ -101,6 +101,7 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.model.body_pos[self.obj_bid] = obj_pos
         self.model.site_pos[self.target_obj_sid] = target_pos
         self.sim.forward()
+        return self._get_obs()
 
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
