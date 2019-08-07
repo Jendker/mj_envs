@@ -56,13 +56,14 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         # xpos for obj
         # xpos for target
         qp = self.data.qpos.ravel()
+        qvel = self.data.qvel.ravel()
         obj_pos = self.data.body_xpos[self.obj_bid].ravel()
         palm_pos = self.data.site_xpos[self.S_grasp_sid].ravel()
         # index_tip_pos = self.data.body_xpos[self.index_tip].ravel()
         # jacobian = self.data.get_body_jacp('rh_palm')
         # print(jacobian)
         target_pos = self.data.site_xpos[self.target_obj_sid].ravel()
-        return np.concatenate([qp[:-6], palm_pos-obj_pos, palm_pos-target_pos, obj_pos-target_pos])
+        return np.concatenate([qp[:-6], qvel[:-6], palm_pos-obj_pos, palm_pos-target_pos, obj_pos-target_pos])
        
     def reset_model(self):
         qp = self.init_qpos.copy()
