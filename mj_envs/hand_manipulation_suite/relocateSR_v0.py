@@ -11,7 +11,7 @@ class RelocateEnvSRV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.obj_bid = 0
         self.index_tip = 0
         curr_dir = os.path.dirname(os.path.abspath(__file__))
-        mujoco_env.MujocoEnv.__init__(self, curr_dir+'/../../../resources/ShadowRobot/DAPG_relocateSR.xml', 5)
+        mujoco_env.MujocoEnv.__init__(self, curr_dir+'/../../../resources/ShadowRobot/Mujoco/DAPG_relocateSR.xml', 5)
         
         # change actuator sensitivity
         # self.sim.model.actuator_gainprm[self.sim.model.actuator_name2id('rh_WRJ2'):self.sim.model.actuator_name2id('rh_WRJ1')+1,:] = np.array([10, 0, 0])
