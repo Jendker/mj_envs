@@ -25,10 +25,18 @@ register(
 )
 from mj_envs.hand_manipulation_suite.pen_v0 import PenEnvV0
 
-# Relcoate an object to the target
+# Relocate an object to the target
 register(
     id='relocate-v0',
     entry_point='mj_envs.hand_manipulation_suite:RelocateEnvV0',
     max_episode_steps=200,
 )
 from mj_envs.hand_manipulation_suite.relocate_v0 import RelocateEnvV0
+
+# Relocate an object to the target with reward from IRL reward function
+register(
+    id='IRL_relocate-v0',
+    entry_point='mj_envs.hand_manipulation_suite:IRLRelocateEnvV0',
+    max_episode_steps=200,
+)
+from mj_envs.hand_manipulation_suite.IRL_relocate_v0 import IRLRelocateEnvV0
