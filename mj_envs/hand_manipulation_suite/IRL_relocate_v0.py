@@ -7,7 +7,7 @@ import os
 ADD_BONUS_REWARDS = True
 
 class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self, irl_class, irl_model_checkpoint_path=None, irl_args=None, gamma=0.995):
+    def __init__(self, irl_class=None, irl_model_checkpoint_path=None, irl_args=None, gamma=0.995):
         self.target_obj_sid = 0
         self.S_grasp_sid = 0
         self.obj_bid = 0
@@ -17,7 +17,7 @@ class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
 
         if irl_class is not None:
             self.irl_model = irl_class(self, **irl_args)
-            self.irl_model.load_checkpoint(full_path=irl_model_checkpoint_path)
+            self.irl_model.load_last(path=irl_model_checkpoint_path)
         else:
             self.irl_model = None
         self.gamma = gamma
@@ -54,8 +54,7 @@ class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         if self.irl_model is None:
             reward = 0
         else:
-            reward = self.irl_model.eval([{'observations': np.expand_dims(ob, axis=0),
-                                           'actions': np.expand_dims(original_action, axis=0)}], gamma=self.gamma)
+            reward = self.irl_model.eval_single(obs=ob, acts=original_action)
 
         return ob, reward, False, dict(goal_achieved=goal_achieved)
 
