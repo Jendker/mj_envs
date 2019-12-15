@@ -19,7 +19,7 @@ class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         if irl_class is not None:
             self.irl_model = irl_class(self, **irl_args)
             if discriminator_checkpoint_iteration is not None:
-                self.irl_model.load_iteration(path=irl_model_checkpoint_path, iteration=discriminator_checkpoint_iteration)
+                self.irl_model.load_checkpoint(path=irl_model_checkpoint_path, iteration=discriminator_checkpoint_iteration)
             else:
                 self.irl_model.load_last(path=irl_model_checkpoint_path)
         else:
