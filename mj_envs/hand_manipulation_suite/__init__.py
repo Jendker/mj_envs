@@ -40,3 +40,11 @@ register(
     max_episode_steps=200,
 )
 from mj_envs.hand_manipulation_suite.IRL_relocate_v0 import IRLRelocateEnvV0
+
+# Custom environment - relocate an object to the target
+register(
+    id='relocate_custom-v0',
+    entry_point='mj_envs.hand_manipulation_suite:RelocateCustomEnvV0',
+    max_episode_steps=200,
+)
+from mj_envs.hand_manipulation_suite.relocate_custom_v0 import RelocateCustomEnvV0
