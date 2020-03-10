@@ -1,6 +1,7 @@
 import numpy as np
 from gym import utils
 from mjrl.envs import mujoco_env
+from mt_src.inverse_rl.models.airl_state import AIRL
 from mujoco_py import MjViewer
 import os
 
@@ -58,7 +59,11 @@ class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         if self.irl_model is None:
             reward = 0
         else:
-            reward = self.irl_model.eval_single(obs=ob, acts=original_action)
+            reward_obs = ob
+            if self.irl_model.use_timestamp:
+                reward_obs = AIRL.insert_timestamp(reward_obs, timestamp=int(self.data.time/self.dt),
+                                                   max_timestamp=self.spec.max_episode_steps)
+            reward = self.irl_model.eval_single(obs=reward_obs, acts=original_action)
 
         return ob, reward, False, dict(goal_achieved=goal_achieved)
 
@@ -116,7 +121,7 @@ class IRLRelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.sim.forward()
         self.viewer.cam.distance = 1.5
 
-    def evaluate_success(self, paths):
+    def evaluate_success(self, paths, **kwargs):
         num_success = 0
         num_paths = len(paths)
         for path in paths:
