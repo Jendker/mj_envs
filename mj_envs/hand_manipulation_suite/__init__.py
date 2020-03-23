@@ -33,6 +33,22 @@ register(
 )
 from mj_envs.hand_manipulation_suite.relocate_v0 import RelocateEnvV0
 
+# Remove an object from the initial position
+register(
+    id='remove-v0',
+    entry_point='mj_envs.hand_manipulation_suite:RemoveEnvV0',
+    max_episode_steps=200,
+)
+from mj_envs.hand_manipulation_suite.remove_v0 import RemoveEnvV0
+
+# Remove an object from the initial position with old reward function - toy example
+register(
+    id='remove_old_reward-v0',
+    entry_point='mj_envs.hand_manipulation_suite:RemoveOldRewardEnvV0',
+    max_episode_steps=200,
+)
+from mj_envs.hand_manipulation_suite.remove_old_reward_v0 import RemoveOldRewardEnvV0
+
 # Relocate an object to the target with reward from IRL reward function
 register(
     id='IRL_relocate-v0',
