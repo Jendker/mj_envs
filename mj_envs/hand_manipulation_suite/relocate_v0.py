@@ -7,10 +7,11 @@ import os
 ADD_BONUS_REWARDS = True
 
 class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self):
+    def __init__(self, use_timestamp=False):
         self.target_obj_sid = 0
         self.S_grasp_sid = 0
         self.obj_bid = 0
+        self.use_timestamp = use_timestamp
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_relocate.xml', 5)
         
@@ -53,7 +54,11 @@ class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
 
         goal_achieved = True if np.linalg.norm(obj_pos-target_pos) < 0.1 else False
 
-        return ob, reward, False, dict(goal_achieved=goal_achieved)
+        info = dict(goal_achieved=goal_achieved)
+        if self.use_timestamp:
+            info['timestamp_inserted'] = True
+
+        return ob, reward, False, info
 
     def get_obs(self):
         # qpos for hand
@@ -63,7 +68,10 @@ class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         obj_pos  = self.data.body_xpos[self.obj_bid].ravel()
         palm_pos = self.data.site_xpos[self.S_grasp_sid].ravel()
         target_pos = self.data.site_xpos[self.target_obj_sid].ravel()
-        return np.concatenate([qp[:-6], palm_pos-obj_pos, palm_pos-target_pos, obj_pos-target_pos])
+        obs = np.concatenate([qp[:-6], palm_pos - obj_pos, palm_pos - target_pos, obj_pos - target_pos])
+        if self.use_timestamp:
+            obs = self.insert_timestamp(obs)
+        return obs
        
     def reset_model(self):
         qp = self.init_qpos.copy()
@@ -109,7 +117,7 @@ class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.sim.forward()
         self.viewer.cam.distance = 1.5
 
-    def evaluate_success(self, paths):
+    def evaluate_success(self, paths, **kwargs):
         num_success = 0
         num_paths = len(paths)
         for path in paths:
