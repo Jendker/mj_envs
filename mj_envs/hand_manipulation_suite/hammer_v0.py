@@ -1,4 +1,3 @@
-import numpy as np
 from gym import utils
 from mjrl.envs import mujoco_env
 from mujoco_py import MjViewer
@@ -112,6 +111,7 @@ class HammerEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.model.body_pos[self.model.body_name2id('nail_board')] = board_pos
         self.model.site_pos[self.target_obj_sid] = target_pos
         self.sim.forward()
+        return self.get_obs()
 
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
