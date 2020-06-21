@@ -8,7 +8,7 @@ import os
 ADD_BONUS_REWARDS = False
 
 class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self):
+    def __init__(self, use_timestamp=False):
         self.target_obj_bid = 0
         self.S_grasp_sid = 0
         self.eps_ball_sid = 0
@@ -19,6 +19,7 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.tar_b_sid = 0
         self.pen_length = 1.0
         self.tar_length = 1.0
+        self.use_timestamp = use_timestamp
 
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_pen.xml', 5)
@@ -81,8 +82,11 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
             done = True if not starting_up else False
 
         goal_achieved = True if (dist < 0.075 and orien_similarity > 0.95) else False
+        info = dict(goal_achieved=goal_achieved)
+        if self.use_timestamp:
+            info['timestamp_inserted'] = True
 
-        return self.get_obs(), reward, done, dict(goal_achieved=goal_achieved)
+        return self.get_obs(), reward, done, info
 
     def get_obs(self):
         qp = self.data.qpos.ravel()
@@ -91,8 +95,11 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         desired_pos = self.data.site_xpos[self.eps_ball_sid].ravel()
         obj_orien = (self.data.site_xpos[self.obj_t_sid] - self.data.site_xpos[self.obj_b_sid])/self.pen_length
         desired_orien = (self.data.site_xpos[self.tar_t_sid] - self.data.site_xpos[self.tar_b_sid])/self.tar_length
-        return np.concatenate([qp[:-6], obj_pos, obj_vel, obj_orien, desired_orien,
+        obs = np.concatenate([qp[:-6], obj_pos, obj_vel, obj_orien, desired_orien,
                                obj_pos-desired_pos, obj_orien-desired_orien])
+        if self.use_timestamp:
+            obs = self.insert_timestamp(obs)
+        return obs
 
     def reset_model(self):
         qp = self.init_qpos.copy()

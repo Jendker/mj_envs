@@ -7,12 +7,13 @@ import os
 ADD_BONUS_REWARDS = True
 
 class HammerEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self):
+    def __init__(self, use_timestamp=False):
         self.target_obj_sid = -1
         self.S_grasp_sid = -1
         self.obj_bid = -1
         self.tool_sid = -1
         self.goal_sid = -1
+        self.use_timestamp = use_timestamp
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_hammer.xml', 5)
         utils.EzPickle.__init__(self)
@@ -66,8 +67,11 @@ class HammerEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
                 reward += 75
 
         goal_achieved = True if np.linalg.norm(target_pos - goal_pos) < 0.010 else False
+        info = dict(goal_achieved=goal_achieved)
+        if self.use_timestamp:
+            info['timestamp_inserted'] = True
 
-        return ob, reward, False, dict(goal_achieved=goal_achieved)
+        return ob, reward, False, info
 
     def get_obs(self):
         # qpos for hand
@@ -80,7 +84,10 @@ class HammerEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         palm_pos = self.data.site_xpos[self.S_grasp_sid].ravel()
         target_pos = self.data.site_xpos[self.target_obj_sid].ravel()
         nail_impact = np.clip(self.sim.data.sensordata[self.sim.model.sensor_name2id('S_nail')], -1.0, 1.0)
-        return np.concatenate([qp[:-6], qv[-6:], palm_pos, obj_pos, obj_rot, target_pos, np.array([nail_impact])])
+        obs = np.concatenate([qp[:-6], qv[-6:], palm_pos, obj_pos, obj_rot, target_pos, np.array([nail_impact])])
+        if self.use_timestamp:
+            obs = self.insert_timestamp(obs)
+        return obs
 
     def reset_model(self):
         self.sim.reset()

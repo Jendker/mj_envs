@@ -7,11 +7,12 @@ import os
 ADD_BONUS_REWARDS = True
 
 class DoorEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self):
+    def __init__(self, use_timestamp=False):
         self.door_hinge_did = 0
         self.door_bid = 0
         self.grasp_sid = 0
         self.handle_sid = 0
+        self.use_timestamp = use_timestamp
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_door.xml', 5)
         
@@ -59,8 +60,11 @@ class DoorEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
                 reward += 10
 
         goal_achieved = True if door_pos >= 1.35 else False
+        info = dict(goal_achieved=goal_achieved)
+        if self.use_timestamp:
+            info['timestamp_inserted'] = True
 
-        return ob, reward, False, dict(goal_achieved=goal_achieved)
+        return ob, reward, False, info
 
     def get_obs(self):
         # qpos for hand
@@ -75,7 +79,10 @@ class DoorEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         else:
             door_open = -1.0
         latch_pos = qp[-1]
-        return np.concatenate([qp[1:-2], [latch_pos], door_pos, palm_pos, handle_pos, palm_pos-handle_pos, [door_open]])
+        obs = np.concatenate([qp[1:-2], [latch_pos], door_pos, palm_pos, handle_pos, palm_pos-handle_pos, [door_open]])
+        if self.use_timestamp:
+            obs = self.insert_timestamp(obs)
+        return obs
 
     def reset_model(self):
         qp = self.init_qpos.copy()
