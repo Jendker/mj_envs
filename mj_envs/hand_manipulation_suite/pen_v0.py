@@ -8,7 +8,7 @@ import os
 ADD_BONUS_REWARDS = False
 
 class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self, use_timestamp=False):
+    def __init__(self, use_timestamp=False, terminate=True):
         self.target_obj_bid = 0
         self.S_grasp_sid = 0
         self.eps_ball_sid = 0
@@ -20,6 +20,7 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.pen_length = 1.0
         self.tar_length = 1.0
         self.use_timestamp = use_timestamp
+        self.terminate = terminate
 
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         mujoco_env.MujocoEnv.__init__(self, curr_dir+'/assets/DAPG_pen.xml', 5)
@@ -80,6 +81,8 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         if obj_pos[2] < 0.075:
             reward -= 5
             done = True if not starting_up else False
+        if not self.terminate:
+            done = False
 
         goal_achieved = True if (dist < 0.075 and orien_similarity > 0.95) else False
         info = dict(goal_achieved=goal_achieved)
