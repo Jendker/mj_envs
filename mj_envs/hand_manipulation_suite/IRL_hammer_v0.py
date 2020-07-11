@@ -10,7 +10,8 @@ class IRLHammerEnvV0(HammerEnvV0, IRL_env):
 
     def step(self, a):
         original_action = a.copy()
-        ob, _, done, infos = HammerEnvV0.step(self, a)
+        ob, original_reward, done, infos = HammerEnvV0.step(self, a)
         reward = self.get_reward(ob, original_action)
+        infos['original_reward'] = original_reward
 
         return ob, reward, done, infos
