@@ -8,7 +8,7 @@ import os
 ADD_BONUS_REWARDS = False
 
 class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self, use_timestamp=False, terminate=True):
+    def __init__(self, use_timestamp=False, terminate=False):
         self.target_obj_bid = 0
         self.S_grasp_sid = 0
         self.eps_ball_sid = 0
