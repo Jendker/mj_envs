@@ -114,9 +114,9 @@ class RelocateEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
-        self.viewer.cam.azimuth = 90
+        self.viewer.cam.azimuth = 60
         self.sim.forward()
-        self.viewer.cam.distance = 1.5
+        self.viewer.cam.distance = 1
 
     def evaluate_success(self, paths, **kwargs):
         num_success = 0

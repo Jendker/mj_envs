@@ -134,12 +134,13 @@ class PenEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.set_state(qp, qv)
         self.model.body_quat[self.target_obj_bid] = desired_orien
         self.sim.forward()
+        return self.get_obs()
 
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
         self.viewer.cam.azimuth = -45
         self.sim.forward()
-        self.viewer.cam.distance = 1.0
+        self.viewer.cam.distance = 0.8
 
     def evaluate_success(self, paths):
         num_success = 0

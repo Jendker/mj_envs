@@ -123,7 +123,7 @@ class HammerEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
         self.viewer.cam.azimuth = 45
-        self.viewer.cam.distance = 2.0
+        self.viewer.cam.distance = 1.25
         self.sim.forward()
 
     def evaluate_success(self, paths):

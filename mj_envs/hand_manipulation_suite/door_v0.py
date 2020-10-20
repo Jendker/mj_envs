@@ -113,6 +113,7 @@ class DoorEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         self.set_state(qp, qv)
         self.model.body_pos[self.door_bid] = state_dict['door_body_pos']
         self.sim.forward()
+        return self.get_obs()
 
     def mj_viewer_setup(self):
         self.viewer = MjViewer(self.sim)
